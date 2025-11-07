@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Анти-невнимательность — чек-лист презентаций</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 24px;
+      display: flex;
+      gap: 24px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .sidebar, .main {
+      background: #111827;
+      border-radius: 18px;
+      padding: 16px 16px 18px;
+      box-shadow: 0 18px 40px rgba(15,23,42,0.55);
+    }
+    .sidebar {
+      flex: 0 0 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    input, button {
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #020817;
+      color: #e5e7eb;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.25);
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: linear-gradient(to right, #22c55e, #22d3ee);
+      color: #020817;
+      font-weight: 600;
+      padding: 8px 12px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.08s;
+      box-shadow: 0 10px 25px rgba(34,197,94,0.22);
+      white-space: nowrap;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(34,211,238,0.25);
+    }
+    button:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 7px 18px rgba(15,23,42,0.9);
+    }
+    .projects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .project-item {
+      padding: 8px 9px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: #020817;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      font-size: 12px;
+    }
+    .project-item span.name {
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+    .project-item span.meta {
+      font-size: 10px;
+      color: #6b7280;
+    }
+    .project-item.active {
+      border-color: #38bdf8;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.9);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.12), #020817);
+    }
+    .project-item:hover:not(.active) {
+      background: #020817;
+      border-color: #111827;
+      transform: translateY(-1px);
+    }
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .project-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+    .progress-pill {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #9ca3af;
+    }
+    .progress-bar-wrap {
+      margin-top: 4px;
+      width: 100%;
+      background: #020817;
+      border-radius: 999px;
+      overflow: hidden;
+      height: 6px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #22c55e, #22d3ee);
+      transition: width 0.18s ease;
+    }
+    .slides {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      align-items: flex-start;
+    }
+    .slides-list {
+      flex: 0 0 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    .slide-item {
+      padding: 7px 8px;
+      background: #020817;
+      border-radius: 10px;
+      font-size: 11px;
+      border: 1px solid #111827;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.12s ease;
+    }
+    .slide-item span {
+      flex: 1;
+      color: #d1d5db;
+    }
+    .slide-item small {
+      font-size: 9px;
+      color: #6b7280;
+      white-space: nowrap;
+    }
+    .slide-item.active {
+      border-color: #38bdf8;
+      box-shadow: 0 6px 14px rgba(15,23,42,0.9);
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.12), #020817);
+    }
+    .slide-item:hover:not(.active) {
+      transform: translateY(-1px);
+      border-color: #111827;
+    }
+    .checklist {
+      flex: 1;
+      background: #020817;
+      border-radius: 14px;
+      padding: 10px 10px 12px;
+      border: 1px solid #111827;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 360px;
+      overflow-y: auto;
+      font-size: 11px;
+    }
+    .checklist-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .checklist-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 6px 6px;
+      border-radius: 10px;
+      transition: background 0.12s ease, transform 0.06s ease, box-shadow 0.06s ease;
+      cursor: pointer;
+    }
+    .checklist-item input[type="checkbox"] {
+      margin-top: 1px;
+      cursor: pointer;
+    }
+    .checklist-item span {
+      flex: 1;
+      color: #d1d5db;
+    }
+    .checklist-item small {
+      display: block;
+      font-size: 9px;
+      color: #6b7280;
+    }
+    .checklist-item.checked {
+      background: #020817;
+      box-shadow: inset 0 0 0 1px #111827;
+      opacity: 0.9;
+    }
+    .checklist-item.checked span {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+    .muted {
+      font-size: 10px;
+      color: #6b7280;
+    }
+    .top-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .ghost-btn {
+      background: transparent;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      color: #9ca3af;
+      box-shadow: none;
+      padding: 5px 9px;
+      font-weight: 400;
+    }
+    .ghost-btn:hover {
+      background: #020817;
+      box-shadow: 0 6px 14px rgba(15,23,42,0.9);
+      color: #e5e7eb;
+    }
+    .danger {
+      border-color: #f97316;
+      color: #f97316;
+    }
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      .sidebar { flex: none; width: 100%; }
+      .main { width: 100%; }
+      .slides { flex-direction: column; }
+      .slides-list { flex: none; display: flex; flex-wrap: wrap; max-height: none; }
+      .slide-item { flex: 0 0 calc(33.33% - 4px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Мои проекты</h2>
+    <div>
+      <div class="label">Новый проект</div>
+      <div style="display:flex; gap:6px; margin-bottom:4px;">
+        <input id="newProjectName" placeholder="Напр. Презентация для защиты">
+        <button id="addProjectBtn">+</button>
+      </div>
+    </div>
+    <div class="projects-list" id="projectsList"></div>
+    <div class="muted">
+      Подсказка: создай шаблон под презентации, статьи, отчёты — и прогоняй каждую работу через чек-лист.
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="project-header">
+      <div>
+        <div class="label">Текущий проект</div>
+        <div class="project-title" id="projectTitle">Не выбран</div>
+      </div>
+      <div>
+        <div class="progress-pill">
+          <span>Готовность проекта:</span>
+          <strong id="projectProgressValue">0%</strong>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="projectProgressBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span class="label" style="margin-bottom:0;">Добавить слайд</span>
+        <input id="newSlideName" placeholder="№ или название слайда" style="width:160px;">
+        <button id="addSlideBtn">Добавить</button>
+      </div>
+      <button class="ghost-btn" id="addDefaultSlides">Слайды 1–10</button>
+      <button class="ghost-btn danger" id="clearProject">Очистить проект</button>
+    </div>
+
+    <div class="slides">
+      <div class="slides-list" id="slidesList">
+        <div class="muted">Добавь слайды для начала.</div>
+      </div>
+      <div class="checklist" id="checklist">
+        <div class="checklist-header-line">
+          <div>
+            <div class="label">Слайд</div>
+            <div class="checklist-title" id="checklistTitle">Не выбран</div>
+          </div>
+          <div class="progress-pill" id="slideProgressWrap" style="display:none;">
+            <span>Готовность:</span>
+            <strong id="slideProgressValue">0%</strong>
+          </div>
+        </div>
+        <div class="muted">
+          Выбери слайд, чтобы отметить проверки: орфография, данные, выравнивание, графики и т.д.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_CHECKLIST = [
+      {
+        text: "Орфография и пунктуация проверены",
+        hint: "Без опечаток в заголовках, подписях, осях, легендах."
+      },
+      {
+        text: "Все данные и числа актуальны",
+        hint: "Цифры, проценты, даты совпадают с исходными источниками."
+      },
+      {
+        text: "Графики и таблицы обновлены",
+        hint: "Нет старых скринов, подписи и единицы измерения корректны."
+      },
+      {
+        text: "Всё выровнено и аккуратно",
+        hint: "Заголовки, текст и объекты по сетке; нет «пляшущих» элементов."
+      },
+      {
+        text: "Стиль и шрифт единообразны",
+        hint: "Один набор шрифтов, одинаковые размеры заголовков, цвета осмысленны."
+      },
+      {
+        text: "Ссылки и источники указаны",
+        hint: "Есть источники под графиками/цитатами, нет висящих ссылок."
+      },
+      {
+        text: "Ничего не обрезано",
+        hint: "Нет текста/объектов, выходящих за пределы слайда."
+      }
+    ];
+
+    const STORAGE_KEY = "focusCheckerProjects_v1";
+    let state = {
+      projects: [],
+      currentProjectId: null,
+      currentSlideId: null
+    };
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      render();
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) state = JSON.parse(raw);
+      } catch (e) {
+        console.error("Load error", e);
+      }
+      render();
+    }
+
+    function createId() {
+      return "id_" + Math.random().toString(36).substring(2, 10);
+    }
+
+    function addProject(name) {
+      if (!name.trim()) return;
+      const project = {
+        id: createId(),
+        name: name.trim(),
+        slides: []
+      };
+      state.projects.push(project);
+      state.currentProjectId = project.id;
+      state.currentSlideId = null;
+      saveState();
+    }
+
+    function addSlide(name) {
+      const project = getCurrentProject();
+      if (!project || !name.trim()) return;
+      const slide = {
+        id: createId(),
+        name: name.trim(),
+        checklist: DEFAULT_CHECKLIST.map(item => ({
+          text: item.text,
+          hint: item.hint,
+          done: false
+        }))
+      };
+      project.slides.push(slide);
+      state.currentSlideId = slide.id;
+      saveState();
+    }
+
+    function getCurrentProject() {
+      return state.projects.find(p => p.id === state.currentProjectId) || null;
+    }
+
+    function getCurrentSlide() {
+      const project = getCurrentProject();
+      if (!project) return null;
+      return project.slides.find(s => s.id === state.currentSlideId) || null;
+    }
+
+    function setCurrentProject(id) {
+      state.currentProjectId = id;
+      const project = getCurrentProject();
+      state.currentSlideId = project && project.slides[0] ? project.slides[0].id : null;
+      saveState();
+    }
+
+    function setCurrentSlide(id) {
+      state.currentSlideId = id;
+      saveState();
+    }
+
+    function toggleChecklistItem(slideId, index) {
+      const project = getCurrentProject();
+      if (!project) return;
+      const slide = project.slides.find(s => s.id === slideId);
+      if (!slide || !slide.checklist[index]) return;
+      slide.checklist[index].done = !slide.checklist[index].done;
+      saveState();
+    }
+
+    function calcSlideProgress(slide) {
+      if (!slide || !slide.checklist || slide.checklist.length === 0) return 0;
+      const done = slide.checklist.filter(i => i.done).length;
+      return Math.round(done / slide.checklist.length * 100);
+    }
+
+    function calcProjectProgress(project) {
+      if (!project || project.slides.length === 0) return 0;
+      let all = 0, done = 0;
+      project.slides.forEach(slide => {
+        slide.checklist.forEach(i => {
+          all += 1;
+          if (i.done) done += 1;
+        });
+      });
+      return all === 0 ? 0 : Math.round(done / all * 100);
+    }
+
+    function clearProject() {
+      const project = getCurrentProject();
+      if (!project) return;
+      if (!confirm("Очистить все слайды и отметки для этого проекта?")) return;
+      project.slides = [];
+      state.currentSlideId = null;
+      saveState();
+    }
+
+    function addDefaultSlides() {
+      const project = getCurrentProject();
+      if (!project) return;
+      if (project.slides.length > 0 && !confirm("Добавить слайды 1–10 к уже существующим?")) return;
+      for (let i = 1; i <= 10; i++) {
+        const name = "Слайд " + i;
+        const exists = project.slides.some(s => s.name === name);
+        if (!exists) {
+          project.slides.push({
+            id: createId(),
+            name,
+            checklist: DEFAULT_CHECKLIST.map(item => ({
+              text: item.text,
+              hint: item.hint,
+              done: false
+            }))
+          });
+        }
+      }
+      state.currentSlideId = project.slides[0]?.id || null;
+      saveState();
+    }
+
+    function render() {
+      const projectsList = document.getElementById("projectsList");
+      const projectTitle = document.getElementById("projectTitle");
+      const slidesList = document.getElementById("slidesList");
+      const checklistDiv = document.getElementById("checklist");
+      const checklistTitle = document.getElementById("checklistTitle");
+      const projectProgressValue = document.getElementById("projectProgressValue");
+      const projectProgressBar = document.getElementById("projectProgressBar");
+      const slideProgressWrap = document.getElementById("slideProgressWrap");
+      const slideProgressValue = document.getElementById("slideProgressValue");
+
+      // Render projects
+      projectsList.innerHTML = "";
+      if (state.projects.length === 0) {
+        const info = document.createElement("div");
+        info.className = "muted";
+        info.textContent = "Пока нет проектов. Создай первый — напр. «Презентация отчёта» ☺";
+        projectsList.appendChild(info);
+      } else {
+        state.projects.forEach(p => {
+          const item = document.createElement("div");
+          item.className = "project-item" + (p.id === state.currentProjectId ? " active" : "");
+          const spanName = document.createElement("span");
+          spanName.className = "name";
+          spanName.textContent = p.name;
+          const spanMeta = document.createElement("span");
+          spanMeta.className = "meta";
+          const slidesCount = p.slides.length;
+          const progress = calcProjectProgress(p);
+          spanMeta.textContent = slidesCount
+            ? `${slidesCount} слайдов · ${progress}%`
+            : "Пока без слайдов";
+          item.appendChild(spanName);
+          item.appendChild(spanMeta);
+          item.onclick = () => setCurrentProject(p.id);
+          projectsList.appendChild(item);
+        });
+      }
+
+      const project = getCurrentProject();
+      if (!project) {
+        projectTitle.textContent = "Не выбран";
+        projectProgressValue.textContent = "0%";
+        projectProgressBar.style.width = "0%";
+        slidesList.innerHTML = '<div class="muted">Выбери или создай проект.</div>';
+        checklistTitle.textContent = "Не выбран";
+        checklistDiv.querySelectorAll(".checklist-item").forEach(el => el.remove());
+        slideProgressWrap.style.display = "none";
+        return;
+      }
+
+      projectTitle.textContent = project.name;
+      const projProgress = calcProjectProgress(project);
+      projectProgressValue.textContent = projProgress + "%";
+      projectProgressBar.style.width = projProgress + "%";
+
+      // Render slides
+      slidesList.innerHTML = "";
+      if (project.slides.length === 0) {
+        slidesList.innerHTML = '<div class="muted">Добавь слайды или нажми «Слайды 1–10».</div>';
+      } else {
+        if (!project.slides.some(s => s.id === state.currentSlideId)) {
+          state.currentSlideId = project.slides[0].id;
+        }
+        project.slides.forEach(slide => {
+          const progress = calcSlideProgress(slide);
+          const item = document.createElement("div");
+          item.className = "slide-item" + (slide.id === state.currentSlideId ? " active" : "");
+          const span = document.createElement("span");
+          span.textContent = slide.name;
+          const small = document.createElement("small");
+          small.textContent = progress + "%";
+          item.appendChild(span);
+          item.appendChild(small);
+          item.onclick = () => setCurrentSlide(slide.id);
+          slidesList.appendChild(item);
+        });
+      }
+
+      // Render checklist for current slide
+      const slide = getCurrentSlide();
+      checklistDiv.querySelectorAll(".checklist-item").forEach(el => el.remove());
+
+      if (!slide) {
+        checklistTitle.textContent = "Не выбран";
+        slideProgressWrap.style.display = "none";
+        return;
+      }
+
+      checklistTitle.textContent = slide.name;
+      const slideProgress = calcSlideProgress(slide);
+      slideProgressWrap.style.display = "inline-flex";
+      slideProgressValue.textContent = slideProgress + "%";
+
+      slide.checklist.forEach((item, idx) => {
+        const row = document.createElement("div");
+        row.className = "checklist-item" + (item.done ? " checked" : "");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = item.done;
+        cb.onclick = (e) => {
+          e.stopPropagation();
+          toggleChecklistItem(slide.id, idx);
+        };
+        const textWrap = document.createElement("div");
+        const span = document.createElement("span");
+        span.textContent = item.text;
+        const hint = document.createElement("small");
+        hint.textContent = item.hint;
+        textWrap.appendChild(span);
+        textWrap.appendChild(hint);
+
+        row.appendChild(cb);
+        row.appendChild(textWrap);
+        row.onclick = () => toggleChecklistItem(slide.id, idx);
+
+        checklistDiv.appendChild(row);
+      });
+    }
+
+    // Event bindings
+    document.getElementById("addProjectBtn").onclick = () => {
+      const input = document.getElementById("newProjectName");
+      addProject(input.value);
+      input.value = "";
+    };
+    document.getElementById("newProjectName").addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        addProject(e.target.value);
+        e.target.value = "";
+      }
+    });
+
+    document.getElementById("addSlideBtn").onclick = () => {
+      const input = document.getElementById("newSlideName");
+      addSlide(input.value);
+      input.value = "";
+    };
+    document.getElementById("newSlideName").addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        addSlide(e.target.value);
+        e.target.value = "";
+      }
+    });
+
+    document.getElementById("addDefaultSlides").onclick = addDefaultSlides;
+    document.getElementById("clearProject").onclick = clearProject;
+
+    loadState();
+  </script>
+</body>
+</html>
